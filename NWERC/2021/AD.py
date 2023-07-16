@@ -1,49 +1,35 @@
 
 
-def read_reply():
-    a = input().split()
-    if "GRANTED" in a:
-        return -1
-    return int(a[2][1:])
+def read(x):
+    print(x, flush=True)
+    reply = input()
+    if "GRANTED" in reply:
+        return 0
+    return int(reply.split()[2][1:])
 
-ans = "a"
-
-### First thing is to guess the length
-size = 1
+l = 1
 while True:
-    print(ans, flush=True)
-    got = read_reply()
-    if got == 5:
-        ans += "a"
-        size += 1
-    else:
+    reply = read("a"*l)
+    if reply != 5:
         break
+    l += 1
+ans = ["a"]*l
 
 
-def calc_correct(rep):
-    assert (rep-14)%9 == 0
-    return (rep-14)//9
-
-### So now we have the length
-### Just going to guess each character at a time
-
-from string import ascii_letters
-
-ans = ["a"]*size
+lrep = 0
 pos = 0
-lastcorrect = 0
+from string import ascii_letters, digits
+s = ascii_letters+digits
 while True:
-    print("".join(ans), flush=True)
-    rep = read_reply()
-    if rep == -1:
+    reply = read("".join(ans))
+    if not reply:
         break
-    correct = calc_correct(rep)
-    if correct > lastcorrect:
+    ans[(reply-14)//9] = s[pos]
+    if lrep != reply:
         pos = 0
-        lastcorrect = correct
     else:
         pos += 1
-        ans[correct] = ascii_letters[pos]
+    lrep = reply
 
-
-
+print("".join(ans), flush=True)
+#print("Hunter2", flush=True)

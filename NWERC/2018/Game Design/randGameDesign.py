@@ -3,7 +3,7 @@ look = {"R":(1,0), "U":(0,1), "D":(0,-1), "L":(-1,0)}
 oppo = {"L":"R", "R":"L", "D":"U", "U":"D"}
 from random import randint, random
 
-
+LOG_FILE = open("log.txt", "w+")
 s = input()
 
 if len(s) >= 3:
@@ -45,16 +45,18 @@ def check(walls):
                 return False
 
     cnt = 0
-    for x,y in seen | walls:
+    for x,y in seen:
         if x - bx == 0 and y - by == 0:
-            #print("FAILED HERE")
             cnt += 1
+        if (x-bx, y-by) in walls:
+            return False
     if cnt != 1:
         return False
     # print(seen,walls)
-    # print(bx, by)
+    print(bx, by, "FINAL BALL POS MY CODE\n", file=LOG_FILE)
     return True, bx, by
 
+tries = 0
 while True:
     walls = gen_board()
 
@@ -68,3 +70,6 @@ while True:
         for x,y in walls:
             print(x-bx,y-by)
         break
+    tries += 1
+    if tries % 10 == 0:
+        print(str(tries)+"\n", file=LOG_FILE)
