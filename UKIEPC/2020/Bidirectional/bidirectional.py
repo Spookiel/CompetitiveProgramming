@@ -1,64 +1,72 @@
 
-from random import random
+def smaller_odd(n):
+    if str(n) == str(n)[::-1]:
+        return str(n)
+    assert len(str(n))%2==1
+    mid = len(str(n))//2
+    nstr = str(n)
+    if nstr[mid] != "0":
+        return nstr[:mid]+str(int(nstr[mid])-1)+nstr[:mid][::-1]
+    else:
+        for i in range(1, mid+1):
+            l,r = nstr[mid-i], nstr[mid+i]
+            if l != r:
+                ### Set to minimum
+                chosen = min(l,r)
 
-n = int(input())
+                fhalf = nstr[:mid-i]+chosen
+                res = fhalf + ((2*i-1)*"0")+fhalf[::-1]
+                if int(res) != 0:
+                    return res
+                return smaller_even(n-1)
+        raise RuntimeError()
+def smaller_even(n):
+    if n <= 100:
+        if n==10:
+            return "9"
 
-def process_end(num):
-    return 1
+        for j in range(99,-1,-1):
+            if str(j) == str(j)[::-1] and j <= n:
+                return str(j)
+    if str(n) == str(n)[::-1]:
+        return str(n)
+    r = len(str(n))//2
+    l = r-1
+    res = list(str(n))
+    done = 0
+    while l > 0:
+        if res[l] == res[r] == "0":
+            l -= 1
+            r += 1
+            done += 1
+            continue
+        else:
+            done += 1
+            #### Reflect up to L
+            return str(n)[:l] + (2*done)*"0"+str(n)[:l][::-1]
+    #print("FAILED", n)
+    return smaller(n-10)
 
-ans = []
-def reduce(num):
-    global ans
-    if len(str(num)) <= 2:
-        #print("LEFT",  num)
-        for j in range(9,-1,-1):
-            if (c := int(10*j+j)) <= num and c != 0:
-                ans.append(c)
-                num -= c
-        if len(str(num)) == 1 and num != 0:
-            ans.append(num)
-        elif num != 0:
-            ans.append(1)
-            ans.append(9)
-        return
-
-
-    minus = num-max(int(50*random()), int(0.001*int(num)))
-    print(minus,int(50*random()), int(0.001*int(num)), num)
-    res = ["0" for i in range(len(str(minus)))]
-    for dig in range((len(str(minus)))//2):
-        res[dig] = str(minus)[dig]
-        res[-dig-1] = str(minus)[dig]
-
-    if len(str(minus))%2 == 0:
-        mid = len(str(minus))//2
-        res[mid] = "0"
-        res[mid+1] = "0"
-
-
-    res = "".join(res)
-
-    ans.append(res)
-
-    print(num, res, "HERE")
-    return reduce(num-int(res))
+def smaller(n):
+    if len(str(n))%2 == 0:
+        return smaller_even(n)
+    else:
+        return smaller_odd(n)
 
 
-
-its = 0
-best = 99999
-while True:
-    reduce(n)
-    if len(ans) < best:
-        best = len(ans)
-        #print(best)
-    if sum(map(int, ans)) != n or len(ans) > 10:
-        #print(sum(map(int, ans)), n)
-        #print(ans)
-        ans = []
-        its += 1
-        continue
+def solve(num):
+    numc = int(num)
+    ans = []
+    while num:
+        ne = smaller(num)
+        #print(num, ne)
+        assert ne == ne[::-1]
+        num -= int(ne)
+        ans.append(int(ne))
     print(len(ans))
     for k in ans:
         print(k)
-    break
+    assert sum(ans) == numc and len(ans) <= 10
+
+n = int(input())
+solve(n)
